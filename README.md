@@ -41,6 +41,31 @@ print(f"Total energy: {sum(rec.energy):.3f} Wh")
 print(f"Total capacity: {sum(rec.capacity):.3f} Ah")
 ```
 
+### Pandas support
+
+When installed, the record file can also be accessed as a pandas dataframe, which is convenient i.e. for quick statistics or plotting with plotly express. An example can be found in [etc/vizualize.ipynb](etc/vizualize.ipynb):
+
+```python
+from shizuku import ShizukuRec
+import plotly.express as px
+
+with open("etc/example.ShizukuRec", "rb") as fd:
+    rec = ShizukuRec(fd)
+
+df = rec.dataframe.rolling("0.5S").mean()
+fig = px.scatter(
+    df,
+    x="Time (s)",
+    y="Power (W)",
+)
+
+fig.write_image("etc/example.png")
+```
+
+The resulting figure looks like this:
+
+![The power usage in watts of the example file plotted using plotly.express and the pandas dataframe access method.](etc/example.png)
+
 ## Disclaimer
 
 Scripts are provided on an "AS IS" basis, and I do not give any warranty, either express or implied. Use of the scripts is at your own risk

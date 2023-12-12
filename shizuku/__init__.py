@@ -2,6 +2,11 @@ import struct
 import datetime
 import typing
 
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
+
 
 class ShizukuReader():
     def __init__(self, fd: typing.BinaryIO):
@@ -96,3 +101,13 @@ class ShizukuRec():
 
     def __str__(self) -> str:
         return f"<{self.__class__.__name__} samples={self.samples} duration={self.duration} rate={self.sampling_rate}>"
+
+    @property
+    def dataframe(self):
+        if pd is None:
+            raise ValueError("Install pandas to access the dataframe")
+
+        df = pd.DataFrame(self.data, columns=self.header)
+        df["Time"] = pd.to_timedelta(df["Time (s)"], unit="s")
+        df = df.set_index("Time")
+        return df
